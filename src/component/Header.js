@@ -13,10 +13,18 @@ class Header extends Component {
             date: new Date(),
             isToggleOn: true
         };
+        // 打开一个WebSocket:
+        var ws = new WebSocket('ws://127.0.0.1:3001');
+        // 响应onmessage事件:
+        ws.onmessage = function(msg) { console.log(msg); };
+        this.ws = ws;
         // bind this, otherwise it would be undefined
         this.handleClick = this.handleClick.bind(this);
     }
     handleClick(){
+
+        // 给服务器发送一个字符串:
+        this.ws.send('Hello!');
         // isomorphic-fetch request
         var url = "http://localhost:3000/rest/header";
         var formData = {};
