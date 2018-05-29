@@ -4,15 +4,21 @@ import Routes from "./Routes";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./reducers/store";
+import { Router, browserHistory } from 'react-router';
+import { syncHistoryWithStore } from 'react-router-redux';
+import { createBrowserHistory } from 'history';
+
+// let history = syncHistoryWithStore(createBrowserHistory(), store);
+// history.listen(location => analyticsService.track(location.pathname));
 
 class App extends Component {
   render() {
     return (
       <div>
-        <Provider store={store}>
-          <BrowserRouter>
+        <Provider store={store} >
+          <Router history={createBrowserHistory()}>
             <Routes />
-          </BrowserRouter>
+          </Router>
         </Provider>
       </div>
     );
@@ -20,3 +26,4 @@ class App extends Component {
 }
 
 export default App;
+

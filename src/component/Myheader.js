@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import logo from "../../public/img/logo.svg";
 import sexg from "../../public/img/sexy.jpg";
@@ -36,7 +37,7 @@ class Myheader extends Component {
     // 打开一个WebSocket:
     var ws = new WebSocket("ws://127.0.0.1:3001");
     // 响应onmessage事件:
-    ws.onmessage = function(msg) {
+    ws.onmessage = function (msg) {
       console.log(msg);
     };
     this.ws = ws;
@@ -56,6 +57,12 @@ class Myheader extends Component {
     console.log("submit", e);
     // 同步
     this.props.dispatch({ type: "login" });
+    console.log(this.context);
+    // this.context.router.history.push('/one');
+    // console.log(History);
+    // console.log(this.props.history);
+    this.props.history.push('/one');
+    this.props.history.go();
     // 异步 createThunkMiddleware
     /*     this.props.dispatch(dispatch => {
       return dispatch({ type: "login" });
@@ -99,7 +106,7 @@ class Myheader extends Component {
           responsive={false}
           colorIndex="accent-2"
         >
-          <Box colorIndex="accent-1" align="start" justify="center">
+          <Box colorIndex="accent-1" align="start" >
             <Image src={huaxianzi} size="xxlarge" />
           </Box>
           <Box
@@ -109,13 +116,15 @@ class Myheader extends Component {
             align="center"
             responsive={false}
           >
-            <LoginForm
-              onSubmit={this.submit}
-              onChange={function() {}}
-              usernameType="text"
-              forgotPassword={<Anchor href="#" label="Forgot password?" />}
-              rememberMe={false}
-            />
+            <App>
+              <LoginForm
+                onSubmit={this.submit}
+                onChange={function () { }}
+                usernameType="text"
+                forgotPassword={<Anchor href="#" label="Forgot password?" />}
+                rememberMe={false}
+              />
+            </App>
           </Box>
         </Box>
 
@@ -131,10 +140,14 @@ class Myheader extends Component {
             </Box>
           </Box>
         </Footer>
-      </Box>
+      </Box >
     );
   }
 }
+
+Myheader.contextTypes = {
+  router: PropTypes.object
+};
 
 const select = state => ({
   status: state.dashboard.status,
