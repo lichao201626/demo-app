@@ -62,7 +62,7 @@ class Myheader extends Component {
     // console.log(History);
     // console.log(this.props.history);
     this.props.history.push('/one');
-    this.props.history.go();
+    // this.props.history.go();
     // 异步 createThunkMiddleware
     /*     this.props.dispatch(dispatch => {
       return dispatch({ type: "login" });
@@ -149,8 +149,11 @@ Myheader.contextTypes = {
   router: PropTypes.object
 };
 
-const select = state => ({
-  status: state.dashboard.status,
-  message: state.dashboard.message
+const select = state => (() => {
+  console.log(state);
+  return {
+    status: state.dashboard.status,
+    message: state.dashboard.message
+  }
 });
 export default connect(select)(Myheader);

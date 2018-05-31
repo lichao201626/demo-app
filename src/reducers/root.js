@@ -5,5 +5,5 @@ import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
 
 export default combineReducers({
   dashboard,
-  "routing": routerReducer
+  router: routerReducer
 });

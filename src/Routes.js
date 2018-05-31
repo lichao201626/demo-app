@@ -5,19 +5,13 @@ import One from "./component/One";
 import Two from "./component/Two";
 import { connect } from "react-redux";
 
-class Routes extends Component {
-  render() {
-    return (
-      <div>
-        <Switch>
-          <Route exact path="/" component={Myheader} />
-          <Route path="/one" component={One} />
-          <Route path="/two" component={Two} />
-        </Switch>
-      </div>
-    );
-  }
-}
-
-const select = state => ({});
-export default connect(select)(Routes);
+const routes = () => {
+  return (
+    <div>
+      <Route exact path="/" component={Myheader} />
+      <Route path="/one" component={One} />
+      <Route path="/two" component={Two} />
+    </div>
+  )
+};
+export default routes;

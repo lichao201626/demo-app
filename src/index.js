@@ -6,7 +6,7 @@ import App from "./App";
 import "./scss/grommet.scss";
 
 // import 'whatwg-fetch';
-import { polyfill as promisePolyfill } from "es6-promise";
+// import { polyfill as promisePolyfill } from "es6-promise";
 // promisePolyfill();
 
 const element = document.getElementById("root");

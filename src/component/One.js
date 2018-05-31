@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import logo from "../../public/img/logo.svg";
 import sexg from "../../public/img/sexy.jpg";
-import huaxianzi from "../../public/img/lig.jpg";
+import huaxianzi from "../../public/img/huaxianzi.jpg";
+import beauti from "../../public/img/beauti.jpg";
 import "../App.scss";
 import Fetch from "isomorphic-fetch";
 import Header from "../../node_modules/grommet/components/Header";
@@ -20,7 +21,7 @@ import Article from "grommet/components/Article";
 import Split from "grommet/components/Split";
 import Sidebar from "grommet/components/Sidebar";
 import LoginForm from "grommet/components/LoginForm";
-
+import { withRouter } from 'react-router-dom';
 import Columns from "grommet/components/Columns";
 class One extends Component {
   // all props should be read-only
@@ -90,7 +91,6 @@ class One extends Component {
           responsive={false}
           colorIndex="neutral-1"
         >
-          <Image src={sexg} size="small" />
           <Box flex={true} justify="center" direction="row">
             <Title>Welcome to page one</Title>
           </Box>
@@ -102,24 +102,7 @@ class One extends Component {
           colorIndex="accent-2"
         >
           <Box colorIndex="accent-1" align="start" >
-            <Image src={huaxianzi} size="xxlarge" />
-          </Box>
-          <Box
-            basis="xlarge"
-            justify="center"
-            direction="row"
-            align="center"
-            responsive={false}
-          >
-            <App>
-              <LoginForm
-                onSubmit={this.submit}
-                onChange={function () { }}
-                usernameType="text"
-                forgotPassword={<Anchor href="#" label="Forgot password?" />}
-                rememberMe={false}
-              />
-            </App>
+            <Anchor path='/' label='back' />
           </Box>
         </Box>
 
@@ -144,4 +127,4 @@ const select = state => ({
   status: '15',
   message: state.dashboard.message
 });
-export default connect(select)(One);
+export default withRouter(connect(select)(One));
