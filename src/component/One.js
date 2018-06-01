@@ -7,10 +7,11 @@ import huaxianzi from "../../public/img/huaxianzi.jpg";
 import beauti from "../../public/img/beauti.jpg";
 import "../App.scss";
 import Fetch from "isomorphic-fetch";
-import Header from "../../node_modules/grommet/components/Header";
-import Footer from "../../node_modules/grommet/components/Footer";
-import Title from "../../node_modules/grommet/components/Title";
-import Box from "../../node_modules/grommet/components/Box";
+import Header from "grommet/components/Header";
+import Footer from "grommet/components/Footer";
+import Actions from "grommet/components/icons/base/Actions";
+import Title from "grommet/components/Title";
+import Box from "grommet/components/Box";
 import Paragraph from "../../node_modules/grommet/components/Paragraph";
 import Menu from "../../node_modules/grommet/components/Menu";
 import Anchor from "../../node_modules/grommet/components/Anchor";
@@ -23,6 +24,8 @@ import Sidebar from "grommet/components/Sidebar";
 import LoginForm from "grommet/components/LoginForm";
 import { withRouter } from 'react-router-dom';
 import Columns from "grommet/components/Columns";
+import Search from 'grommet/components/Search';
+
 class One extends Component {
   // all props should be read-only
   // All React components must act like pure functions with respect to their props.
@@ -83,29 +86,39 @@ class One extends Component {
   }
   render() {
     return (
-      <Box full={true} justify="between" colorIndex="accent-1">
-        <Box
-          flex={true}
-          justify="start"
-          direction="row"
-          responsive={false}
-          colorIndex="neutral-1"
-        >
-          <Box flex={true} justify="center" direction="row">
-            <Title>Welcome to page one</Title>
+      <Box full={true} justify="between">
+        <Header fixed={false}
+          float={false}
+          splash={false}>
+          <Title>
+            <Image src={beauti} size="small" />
+          </Title>
+          <Box flex={true}
+            justify="center"
+            align="center"
+            direction='row'
+            responsive={false}>
+            <Search inline={true}
+              fill={true}
+              size='medium'
+              placeHolder='Search'
+              dropAlign={{ "right": "right" }} />
           </Box>
-        </Box>
-        <Box
-          basis="xlarge"
-          direction="row"
-          responsive={false}
-          colorIndex="accent-2"
-        >
-          <Box colorIndex="accent-1" align="start" >
-            <Anchor path='/' label='back' />
-          </Box>
-        </Box>
-
+        </Header>
+        <Sidebar colorIndex='accent-1' fixed={true}>
+          <Menu primary={true}
+            fill={true}>
+            <Anchor path='/' icon={<Actions />} >
+              First
+              </Anchor>
+            <Anchor path='/' icon={<Actions />}>
+              First
+              </Anchor>
+            <Anchor path='/' icon={<Actions />}>
+              First
+              </Anchor>
+          </Menu>
+        </Sidebar>
         <Footer justify="between" size="small">
           <Box flex={true} justify="end" direction="row" colorIndex="light-2">
             <Box direction="row" justify="end" pad={{ between: "medium" }}>
@@ -119,6 +132,7 @@ class One extends Component {
           </Box>
         </Footer>
       </Box >
+
     );
   }
 }
