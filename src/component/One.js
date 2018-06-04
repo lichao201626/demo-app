@@ -25,6 +25,7 @@ import LoginForm from "grommet/components/LoginForm";
 import { withRouter } from 'react-router-dom';
 import Columns from "grommet/components/Columns";
 import Search from 'grommet/components/Search';
+import Heading from 'grommet/components/Heading';
 
 class One extends Component {
   // all props should be read-only
@@ -86,53 +87,76 @@ class One extends Component {
   }
   render() {
     return (
-      <Box full={true} justify="between">
-        <Header fixed={false}
-          float={false}
-          splash={false}>
-          <Title>
-            <Image src={beauti} size="small" />
-          </Title>
-          <Box flex={true}
-            justify="center"
-            align="center"
-            direction='row'
-            responsive={false}>
-            <Search inline={true}
-              fill={true}
-              size='medium'
-              placeHolder='Search'
-              dropAlign={{ "right": "right" }} />
-          </Box>
-        </Header>
-        <Sidebar colorIndex='accent-1' fixed={true}>
-          <Menu primary={true}
-            fill={true}>
-            <Anchor path='/' icon={<Actions />} >
-              First
+      <App centered={false}>
+        <Split colorIndex='accent-1' flex="right" priority="right">
+          <Sidebar colorIndex='neutral-3' fixed={true}>
+            <Menu fill={true} primary={true}>
+              <Anchor path='/' icon={<Actions />}>
+                One
               </Anchor>
-            <Anchor path='/' icon={<Actions />}>
-              First
+              <Anchor path='/' icon={<Actions />}>
+                Two
               </Anchor>
-            <Anchor path='/' icon={<Actions />}>
-              First
+              <Anchor path='/' icon={<Actions />} >
+                Three
+            </Anchor>
+              <Anchor path='/' icon={<Actions />} >
+                Four
               </Anchor>
-          </Menu>
-        </Sidebar>
-        <Footer justify="between" size="small">
-          <Box flex={true} justify="end" direction="row" colorIndex="light-2">
-            <Box direction="row" justify="end" pad={{ between: "medium" }}>
-              <Paragraph margin="none">© 2018 Lichao Happy</Paragraph>
-              <Menu direction="row" size="small" dropAlign={{ right: "right" }}>
-                <Anchor href="#">Support</Anchor>
-                <Anchor href="#">Contact</Anchor>
-                <Anchor href="#">About</Anchor>
-              </Menu>
+              <Anchor path='/' icon={<Actions />} >
+                Five
+              </Anchor>
+              <Anchor path='/' icon={<Actions />} >
+                Six
+            </Anchor>
+              <Anchor path='/' icon={<Actions />} >
+                Seven
+            </Anchor>
+            </Menu>
+          </Sidebar>
+          <Article primary={true}>
+            <Header>
+              <Title>
+                Search
+              </Title>
+              <Box flex={true}
+                justify='end'
+                direction='row'
+                responsive={false}>
+                <Search inline={true}
+                  fill={true}
+                  size='medium'
+                  placeHolder='Search'
+                  dropAlign={{ "right": "right" }} />
+                <Menu icon={<Actions />}
+                  dropAlign={{ "right": "right" }}>
+                  <Anchor href='#'
+                    className='active'>
+                    First
+                    </Anchor>
+                  <Anchor href='#'>
+                    Second
+                  </Anchor>
+                  <Anchor href='#'>
+                    Third
+              </Anchor>
+                </Menu>
+              </Box>
+            </Header>
+            <Box fixed={true} >
+              <Heading tag='h3' strong={true}>
+                Running Tasks
+          </Heading>
+              <Paragraph size='large'>
+                The backend here is using request polling (5 second interval).
+            See <Anchor path='/tasks'
+                  label="asdf" /> page for an example
+of websocket communication.
+          </Paragraph>
             </Box>
-          </Box>
-        </Footer>
-      </Box >
-
+          </Article>
+        </Split>
+      </App>
     );
   }
 }

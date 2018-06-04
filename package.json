@@ -53,7 +53,7 @@
     "build": "concurrently 'yarn react-build' 'cd server && yarn build'",
     "test": "react-scripts test --env=jsdom",
     "pack": "webpack",
-    "dev": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --progress",
+    "dev": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --progress --mode development --open",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
