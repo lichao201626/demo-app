@@ -36,6 +36,7 @@ class One extends Component {
     // state and Lifecycle
     this.state = {
       date: new Date(),
+      value: 'addddd',
       isToggleOn: true
     };
     // 打开一个WebSocket:
@@ -48,12 +49,25 @@ class One extends Component {
     // bind this, otherwise it would be undefined
     this.handleClick = this.handleClick.bind(this);
     this.submit = this.submit.bind(this);
+    this.onDOMChange = this.onDOMChange.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onSelect = this.onSelect.bind(this);
   }
   componentDidMount() {
     console.log("one did mount");
   }
   componentWillReceiveProps(props) {
     console.log("will receive", props);
+  }
+  onDOMChange(e) {
+    console.log("on dom change", e);
+    console.log("on dom change value", e.target.value);
+  }
+  onSelect(e) {
+    console.log("on select", e);
+  }
+  onKeyDown(e) {
+    console.log("on key down", e);
   }
   submit(e) {
     console.log("this", this);
@@ -127,6 +141,10 @@ class One extends Component {
                   fill={true}
                   size='medium'
                   placeHolder='Search'
+                  defaultValue="asdf"
+                  onDOMChange={this.onDOMChange}
+                  onSelect={this.onSelect}
+                  onKeyDown={this.onKeyDown}
                   dropAlign={{ "right": "right" }} />
                 <Menu icon={<Actions />}
                   dropAlign={{ "right": "right" }}>
