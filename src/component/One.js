@@ -126,10 +126,10 @@ class One extends Component {
               <Anchor path='/' icon={<Actions />}>
                 One
               </Anchor>
-              <Anchor href='http://www.baidu.com' icon={<Actions />}>
+              <Anchor path='/two' icon={<Actions />}>
                 Two
               </Anchor>
-              <Anchor path='/' icon={<Actions />} >
+              <Anchor href='http://www.baidu.com' icon={<Actions />} >
                 Three
             </Anchor>
               <Anchor path='/' icon={<Actions />} >

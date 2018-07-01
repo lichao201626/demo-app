@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import "../App.scss";
 import * as THREE from "three";
 import Box from "grommet/components/Box";
+let meshes = require('./meshes');
 
 // document.body.appendChild(renderer.domElement);
 var camera, scene, renderer;
@@ -41,27 +42,46 @@ class Two extends Component {
 
   init() {
 
-    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
-    camera.position.z = 1;
+    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.03, 10);
+    camera.position.x = 0.4;
+    camera.position.y = 0.4;
+    camera.position.z = 1.4;
+    // camera.lookAt(scene.position);
 
     scene = new THREE.Scene();
 
-    geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-    material = new THREE.MeshNormalMaterial();
-
-    mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-
-    let geometry2 = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-    let material2 = new THREE.MeshNormalMaterial();
-    mesh2 = new THREE.Mesh(geometry2, material2);
+    /*     geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+        material = new THREE.MeshNormalMaterial();
+    
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.position.x = 0;
+        scene.add(mesh);
+    
+        let geometry2 = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+        let material2 = new THREE.MeshNormalMaterial();
+        mesh2 = new THREE.Mesh(geometry2, material2); */
     // mesh2.position();
     // mesh2.position.set(new THREE.Vector3(1, 1, 1));
-    mesh2.position.x = 0.3;
-    scene.add(mesh2);
+    // mesh2.position.x = 0.2;
+    // mesh2.position.y = 0.2;
+    // mesh2.position.z = -0.2;
+    let meshesArray = meshes.create27Meshes(0.1);
+    console.log(meshesArray);
+    meshesArray.forEach(element => {
+      scene.add(element);
 
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+      // var edges = new THREE.EdgesGeometry(geometry);
+
+      // var geometry = new THREE.BoxBufferGeometry(100, 100, 100);
+      var edges = new THREE.EdgesGeometry(element.geometry);
+      var line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
+      scene.add(line);
+      // scene.add(edges);
+    });
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    // renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0xFFFFFF, 1.0);
     document.body.appendChild(renderer.domElement);
 
   }
@@ -70,12 +90,12 @@ class Two extends Component {
 
     requestAnimationFrame(this.animate);
 
-    mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.02;
+    // mesh.rotation.x += 0.01;
+    // mesh.rotation.y += 0.02;
 
-    mesh2.rotation.x += 0.01;
-    mesh2.rotation.y += 0.02;
-
+    // mesh2.rotation.x += 0.01;
+    // mesh2.rotation.y += 0.02;
+    // camera.position.y -= 0.002;
     renderer.render(scene, camera);
 
   }
