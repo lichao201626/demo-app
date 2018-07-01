@@ -7,6 +7,7 @@ import huaxianzi from "../../public/img/huaxianzi.jpg";
 import beauti from "../../public/img/beauti.jpg";
 import "../App.scss";
 import Fetch from "isomorphic-fetch";
+import FetchJsonp from "fetch-jsonp";
 import Header from "grommet/components/Header";
 import Footer from "grommet/components/Footer";
 import Actions from "grommet/components/icons/base/Actions";
@@ -37,6 +38,7 @@ class One extends Component {
     this.state = {
       date: new Date(),
       value: 'addddd',
+      sug: [],
       isToggleOn: true
     };
     // 打开一个WebSocket:
@@ -52,6 +54,7 @@ class One extends Component {
     this.onDOMChange = this.onDOMChange.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onSelect = this.onSelect.bind(this);
+    this.query = this.query.bind(this);
   }
   componentDidMount() {
     console.log("one did mount");
@@ -62,6 +65,23 @@ class One extends Component {
   onDOMChange(e) {
     console.log("on dom change", e);
     console.log("on dom change value", e.target.value);
+    this.query(e.target.value);
+  }
+  query(q) {
+    // fetch-jsonp request
+    var url2 = 'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?cb=callback&wd=' + q;
+    FetchJsonp(url2, {
+      timeout: 3000,
+      jsonpCallbackFunction: 'callback'
+    }).then(function (response) {
+      console.log('cccc1', response);
+      return response.json();
+    }).then(data => {
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", data.s);
+      this.setState({
+        sug: data.s
+      });
+    });
   }
   onSelect(e) {
     console.log("on select", e);
@@ -95,9 +115,7 @@ class One extends Component {
     }).then(data => {
       console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", data);
     });
-    this.setState(preState => ({
-      isToggleOn: !preState.isToggleOn
-    }));
+
   }
   render() {
     return (
@@ -108,7 +126,7 @@ class One extends Component {
               <Anchor path='/' icon={<Actions />}>
                 One
               </Anchor>
-              <Anchor path='/' icon={<Actions />}>
+              <Anchor href='http://www.baidu.com' icon={<Actions />}>
                 Two
               </Anchor>
               <Anchor path='/' icon={<Actions />} >
@@ -128,7 +146,7 @@ class One extends Component {
             </Anchor>
             </Menu>
           </Sidebar>
-          <Article primary={true}>
+          <Article>
             <Header>
               <Title>
                 Search
@@ -141,11 +159,12 @@ class One extends Component {
                   fill={true}
                   size='medium'
                   placeHolder='Search'
-                  defaultValue="asdf"
+                  defaultValue=""
                   onDOMChange={this.onDOMChange}
                   onSelect={this.onSelect}
+                  suggestions={this.state.sug}
                   onKeyDown={this.onKeyDown}
-                  dropAlign={{ "right": "right" }} />
+                  dropAlign={{ "top": "bottom" }} />
                 <Menu icon={<Actions />}
                   dropAlign={{ "right": "right" }}>
                   <Anchor href='#'
@@ -162,15 +181,10 @@ class One extends Component {
               </Box>
             </Header>
             <Box fixed={true} >
-              <Heading tag='h3' strong={true}>
-                Running Tasks
-          </Heading>
               <Paragraph size='large'>
-                The backend here is using request polling (5 second interval).
-            See <Anchor path='/tasks'
-                  label="asdf" /> page for an example
-of websocket communication.
-          </Paragraph>
+                <Anchor path='/tasks'
+                  label={this.state.sug[0]} />
+              </Paragraph>
             </Box>
           </Article>
         </Split>

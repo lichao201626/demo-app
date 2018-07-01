@@ -66,10 +66,10 @@ if (env === "production") {
     watchOptions: {
       ignored: /node_modules/
     },
-    historyApiFallback: true,
+    historyApiFallback: true/* ,
     proxy: {
       "/api/*": "http://localhost:5000"
-    }
+    } */
   };
 }
 

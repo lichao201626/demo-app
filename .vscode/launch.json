@@ -9,6 +9,12 @@
             "request": "launch",
             "name": "启动程序",
             "program": "${workspaceFolder}/start'"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "debug testTree",
+            "program": "${workspaceFolder}/server/test/tree/test.js"
         }
     ]
 }
