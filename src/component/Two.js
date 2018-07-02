@@ -49,6 +49,8 @@ class Two extends Component {
     // camera.lookAt(scene.position);
 
     scene = new THREE.Scene();
+    var light = new THREE.PointLight(0x8844ff, 5, 100);
+    scene.add(light);
 
     /*     geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
         material = new THREE.MeshNormalMaterial();
@@ -73,9 +75,15 @@ class Two extends Component {
       // var edges = new THREE.EdgesGeometry(geometry);
 
       // var geometry = new THREE.BoxBufferGeometry(100, 100, 100);
-      var edges = new THREE.EdgesGeometry(element.geometry);
-      var line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
-      scene.add(line);
+      /*       var edges = new THREE.EdgesGeometry(element.geometry);
+            var line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
+            scene.add(line); */
+
+      /*      let border = new THREE.BoxHelper(element, 0x0dc3b4);//设置边框，这个边框不会旋转
+           scene.add(border); */
+      let edges = new THREE.WireframeHelper(element, 0x0dc3b4);//设置边框，可以旋转
+
+      scene.add(edges);
       // scene.add(edges);
     });
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
