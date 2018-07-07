@@ -72,7 +72,10 @@ exports.deletePromise = (index, type, id, refresh) => {
 exports.searchPromise = (index, type, body) => {
     return new Promise((resolve, reject) => {
         client.search({
-            index, type, body
+            index,
+            type,
+            size: 10000,
+            body
         }, (err, resp, status) => {
             if (err) {
                 reject({ err, resp, status });
