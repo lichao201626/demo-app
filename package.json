@@ -16,6 +16,7 @@
     "concurrently": "^3.5.1",
     "copy-webpack-plugin": "^4.0.1",
     "cross-env": "^5.0.1",
+    "downloadjs": "^1.4.7",
     "es6-promise": "^4.0.5",
     "eslint": "^4.3.0",
     "eslint-config-airbnb": "^15.1.0",

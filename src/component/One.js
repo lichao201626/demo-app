@@ -27,6 +27,7 @@ import { withRouter } from 'react-router-dom';
 import Columns from "grommet/components/Columns";
 import Search from 'grommet/components/Search';
 import Heading from 'grommet/components/Heading';
+var download = require('downloadjs');
 
 class One extends Component {
   // all props should be read-only
@@ -68,6 +69,20 @@ class One extends Component {
     this.query(e.target.value);
   }
   query(q) {
+    // test download
+    var url = "http://localhost:5000/file/test";
+    var formData = {};
+    Fetch(url, {
+      method: "GET"
+    }).then(data => {
+      let blb = data.blob();
+      console.log('##############', blb);
+      return blb;
+      // download(data.body);
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", data);
+    }).then(blob => {
+      download(blob, 'out2.xlsx');
+    });
     // fetch-jsonp request
     var url2 = 'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?cb=callback&wd=' + q;
     FetchJsonp(url2, {
@@ -135,7 +150,7 @@ class One extends Component {
               <Anchor path='/' icon={<Actions />} >
                 Four
               </Anchor>
-              <Anchor path='/' icon={<Actions />} >
+              <Anchor path='/file/test' icon={<Actions />} >
                 Five
               </Anchor>
               <Anchor path='/' icon={<Actions />} >

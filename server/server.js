@@ -46,10 +46,42 @@ app.use(logger("dev"));
 // 通常用于加载静态资源
 app.use(express.static(__dirname + '/public'))
 
+app.get('/file/:name', function (req, res, next) {
+  console.log('file name');
+  var options = {
+    root: __dirname + '/es/',
+    dotfiles: 'deny',
+    headers: {
+      'x-timestamp': Date.now(),
+      'x-sent': true
+    }
+  };
+
+  var fileName = 'out.xlsx';
+  res.download('./es/out.xlsx', function (err) {
+    if (err) {
+      console.log(err);
+      res.status(err.status).end();
+    }
+    else {
+      console.log('Sent:', fileName);
+    }
+  });
+  /*   res.sendFile(fileName, options, function (err) {
+      if (err) {
+        console.log(err);
+        res.status(err.status).end();
+      }
+      else {
+        console.log('Sent:', fileName);
+      }
+    }); */
+
+});
+
 app.get('*', function (request, response) {
   response.sendFile(path.resolve(__dirname, 'public', 'index.html'))
-})
-
+});
 /* app.use("/", express.static(path.join(__dirname, "/../dist")));
 app.get("/*", (req, res) => {
   res.sendFile(path.resolve(path.join(__dirname, "/../dist/index.html")));
