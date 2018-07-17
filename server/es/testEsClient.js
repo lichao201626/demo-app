@@ -3,8 +3,16 @@ let i = 0;
 // reateIndexP('user');
 
 async function testUser() {
-	await esClient.createIndexP('user');
-	addUsers();
+	/* 	await esClient.createIndexP('user');
+	addUsers(); */
+	try {
+		let resObj = await esClient.indexExistP('user');
+		console.log(resObj);
+		let resObj2 = await esClient.indexExistP('xxx');
+		console.log(resObj2);
+	} catch (error) {
+		console.log(error);
+	}
 }
 
 function addUsers(number) {
