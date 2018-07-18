@@ -51,35 +51,9 @@ class Two extends Component {
 		var light = new THREE.PointLight(0x8844ff, 5, 100);
 		scene.add(light);
 
-		/*     geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-        material = new THREE.MeshNormalMaterial();
-    
-        mesh = new THREE.Mesh(geometry, material);
-        mesh.position.x = 0;
-        scene.add(mesh);
-    
-        let geometry2 = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-        let material2 = new THREE.MeshNormalMaterial();
-        mesh2 = new THREE.Mesh(geometry2, material2); */
-		// mesh2.position();
-		// mesh2.position.set(new THREE.Vector3(1, 1, 1));
-		// mesh2.position.x = 0.2;
-		// mesh2.position.y = 0.2;
-		// mesh2.position.z = -0.2;
 		let meshesArray = meshes.create27Meshes(0.1);
 		console.log(meshesArray);
 		meshesArray.forEach((element) => {
-			// var edges = new THREE.EdgesGeometry(geometry);
-
-			// var geometry = new THREE.BoxBufferGeometry(100, 100, 100);
-			/*       var edges = new THREE.EdgesGeometry(element.geometry);
-            var line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
-            scene.add(line); */
-
-			/*      let border = new THREE.BoxHelper(element, 0x0dc3b4);//设置边框，这个边框不会旋转
-           scene.add(border); */
-			// let edges = new THREE.WireframeHelper(element, 0x0dc3b4);//设置边框，可以旋转
-			// let edges = new THREE.EdgesHelper(element, 0x1535f7); //设置边框，可以旋转
 			var box = new THREE.BoxHelper(element);
 			// scene.add(edges);
 			scene.add(element);
@@ -95,7 +69,14 @@ class Two extends Component {
 
 	animate() {
 		requestAnimationFrame(this.animate);
-
+		scene.children.forEach((child) => {
+			if (child.type == 'Mesh') {
+				// console.log(child);
+				// child.rotateX(Math.PI / 2);
+				child.rotation.x += 0.01;
+			}
+		});
+		// mesh.rotateX(Math.PI / 2);
 		// mesh.rotation.x += 0.01;
 		// mesh.rotation.y += 0.02;
 
@@ -114,24 +95,6 @@ class Two extends Component {
 		cancelAnimationFrame(this.frameId);
 	}
 
-	/*   animate() {
-      // this.cube.rotation.x += 0.01;
-      //this.cube.rotation.y += 0.01;
-  
-      this.renderScene();
-      this.frameId = window.requestAnimationFrame(this.animate);
-    } */
-
-	/*   renderScene() {
-      this.renderer.render(this.scene, this.camera);
-    } */
-	// style={{ width: "400px", height: "400px" }}
-	/*   <div
-    style={{ width: "100%", height: "1000%" }}
-    ref={mount => {
-      this.mount = mount;
-    }}
-  /> */
 	render() {
 		return (
 			<div
