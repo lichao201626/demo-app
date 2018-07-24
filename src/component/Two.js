@@ -18,27 +18,29 @@ var intersects, intersect;
 let downIntersect, upIntersect;
 
 let clickVector, clickFace;
-var raycaster = new THREE.Raycaster();//光线碰撞检测器
-var mouse = new THREE.Vector2();//存储鼠标坐标或者触摸坐标
-var isRotating = false;//魔方是否正在转动
-var intersect;//碰撞光线穿过的元素
-var normalize;//触发平面法向量
-var startPoint;//触发点
+var raycaster = new THREE.Raycaster(); //光线碰撞检测器
+var mouse = new THREE.Vector2(); //存储鼠标坐标或者触摸坐标
+var isRotating = false; //魔方是否正在转动
+var intersect; //碰撞光线穿过的元素
+var normalize; //触发平面法向量
+var startPoint; //触发点
 var movePoint;
 var beginStatus = [];
-var trackballControls;//视角控制器
-var xLine = new THREE.Vector3(1, 0, 0);//X轴正方向
-var xLineAd = new THREE.Vector3(-1, 0, 0);//X轴负方向
-var yLine = new THREE.Vector3(0, 1, 0);//Y轴正方向
-var yLineAd = new THREE.Vector3(0, -1, 0);//Y轴负方向
-var zLine = new THREE.Vector3(0, 0, 1);//Z轴正方向
-var zLineAd = new THREE.Vector3(0, 0, -1);//Z轴负方向
+var trackballControls; //视角控制器
+//魔方转动的六个方向
+const XLine = new THREE.Vector3(1, 0, 0); //X轴正方向
+const XLineAd = new THREE.Vector3(-1, 0, 0); //X轴负方向
+const YLine = new THREE.Vector3(0, 1, 0); //Y轴正方向
+const YLineAd = new THREE.Vector3(0, -1, 0); //Y轴负方向
+const ZLine = new THREE.Vector3(0, 0, 1); //Z轴正方向
+const ZLineAd = new THREE.Vector3(0, 0, -1); //Z轴负方向
+var minCubeIndex;
 
 var transitions = {
-	'x': { 'y': 'z', 'z': 'y' },
-	'y': { 'x': 'z', 'z': 'x' },
-	'z': { 'x': 'y', 'y': 'x' }
-}
+	x: { y: 'z', z: 'y' },
+	y: { x: 'z', z: 'x' },
+	z: { x: 'y', y: 'x' }
+};
 
 let meshesArray;
 let mesh2;
@@ -80,6 +82,27 @@ class Two extends Component {
 		// this.start();
 		this.init();
 		this.animate();
+		document.addEventListener(
+			'mousedown',
+			(e) => {
+				this.startCube(e);
+			},
+			false
+		); /*ES6新特性，箭头函数，需要依赖jsx编译工具才能正确运行*/
+		document.addEventListener(
+			'mouseup',
+			(e) => {
+				this.moveCube(e);
+			},
+			false
+		); /*ES6新特性，箭头函数，需要依赖jsx编译工具才能正确运行*/ /*ES6新特性，箭头函数，需要依赖jsx编译工具才能正确运行*/
+		/* 		document.addEventListener(
+			'mouseup',
+			(e) => {
+				this.stopCube(e);
+			},
+			false
+		); */
 	}
 
 	componentWillUnmount() {
@@ -97,7 +120,6 @@ class Two extends Component {
 		scene = new THREE.Scene();
 		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 		console.log(camera);
-		controls = new OrbitControls(camera);
 
 		camera.position.x = 10;
 		camera.position.y = 10;
@@ -106,7 +128,6 @@ class Two extends Component {
 		camera.lookAt(scene.position);
 		// camera.lookAt(scene.position);
 		//console.log('cccc', controls);
-		controls.update();
 
 		scene = new THREE.Scene();
 		var light = new THREE.PointLight(0x8844ff, 5, 100);
@@ -121,7 +142,7 @@ class Two extends Component {
 					scene.add(box);
 					// scene.add(edges);
 				}); */
-
+		let ids = [];
 		for (var i = 0; i < meshesArray.length; i++) {
 			var item = meshesArray[i];
 			beginStatus.push({
@@ -131,22 +152,24 @@ class Two extends Component {
 				cubeIndex: item.id
 			});
 			item.cubeIndex = item.id;
+			ids.push(item.id);
 			scene.add(meshesArray[i]);
 		}
-		/* 		var cubegeo = new THREE.BoxGeometry(12, 12, 12);
-				var hex = 0x000000;
-				for (var i = 0; i < cubegeo.faces.length; i += 2) {
-					cubegeo.faces[i].color.setHex(hex);
-					cubegeo.faces[i + 1].color.setHex(hex);
-				}
-				var cubemat = new THREE.MeshBasicMaterial({
-					vertexColors: THREE.FaceColors,
-					opacity: 0,
-					transparent: true
-				});
-				var cube = new THREE.Mesh(cubegeo, cubemat);
-				cube.cubeType = 'coverCube';
-				scene.add(cube); */
+		minCubeIndex = this.min(ids).value;
+		var cubegeo = new THREE.BoxGeometry(12, 12, 12);
+		var hex = 0x000000;
+		for (var i = 0; i < cubegeo.faces.length; i += 2) {
+			cubegeo.faces[i].color.setHex(hex);
+			cubegeo.faces[i + 1].color.setHex(hex);
+		}
+		var cubemat = new THREE.MeshBasicMaterial({
+			vertexColors: THREE.FaceColors,
+			opacity: 0,
+			transparent: true
+		});
+		var cube = new THREE.Mesh(cubegeo, cubemat);
+		cube.cubeType = 'coverCube';
+		scene.add(cube);
 
 		renderer = new THREE.WebGLRenderer({
 			antialias: true
@@ -156,6 +179,8 @@ class Two extends Component {
 		renderer.setClearColor('#a3bdc0');
 		document.body.appendChild(renderer.domElement);
 
+		controls = new OrbitControls(camera, renderer.domElement);
+		controls.update();
 		trackballControls = new TrackballControls(camera);
 		trackballControls.rotateSpeed = 1;
 		trackballControls.panSpeed = 0;
@@ -165,15 +190,6 @@ class Two extends Component {
 
 		console.log('renderer domelement', renderer.domElement);
 		console.log('scene', scene);
-		/* 		renderer.domElement.addEventListener('mousedown', this.onMouseDown, false);
-				renderer.domElement.addEventListener('mousemove', this.onMouseMove, false);
-				renderer.domElement.addEventListener('mouseup', this.onMouseUp, false);
-				renderer.domElement.addEventListener('mouseout', this.onMouseOut, false);
-		 */
-		renderer.domElement.addEventListener('mousedown', this.startCube, false);
-		renderer.domElement.addEventListener('mousemove', this.moveCube, false);
-		renderer.domElement.addEventListener('mouseup', this.stopCube, false);
-		renderer.domElement.addEventListener('mouseout', this.onMouseOut, false);
 	}
 
 	renderscence() {
@@ -186,8 +202,12 @@ class Two extends Component {
 
 	startCube(event) {
 		// console.log(event);
-		OrbitControls.noRotate = true;
+		intersect = null;
+		startPoint = null;
 		this.getIntersects(event);
+		if (intersect) {
+			controls.enableRotate = false;
+		}
 		if (!isRotating && intersect) {
 			startPoint = intersect.point;
 			trackballControls.enabled = false;
@@ -198,13 +218,15 @@ class Two extends Component {
 
 	stopCube() {
 		intersect = null;
-		startPoint = null
+		startPoint = null;
+		controls.enableRotate = true;
 	}
 
 	moveCube(event) {
 		// is angle is too small
 		this.getIntersects(event);
 		if (intersect) {
+			controls.enableRotate = false;
 			if (!isRotating && startPoint) {
 				movePoint = intersect.point;
 				if (!movePoint.equals(startPoint)) {
@@ -214,8 +236,9 @@ class Two extends Component {
 					var elements = this.getBoxs(intersect, direction);
 					var startTime = new Date().getTime();
 					var that = this;
-					requestAnimationFrame(function (timestamp) {
+					requestAnimationFrame(function(timestamp) {
 						that.rotateAnimation(elements, direction, timestamp, 0, 0);
+						that.stopCube();
 					});
 				}
 			}
@@ -250,7 +273,6 @@ class Two extends Component {
 			case 1.1:
 			case 2.3:
 			case 3.4:
-
 				for (var i = 0; i < elements.length; i++) {
 					this.rotateAroundWorldZ(elements[i], 90 * Math.PI / 180 * (currentstamp - laststamp) / totalTime);
 				}
@@ -296,7 +318,7 @@ class Two extends Component {
 		}
 		if (currentstamp - startstamp < totalTime) {
 			var that = this;
-			requestAnimationFrame(function (timestamp) {
+			requestAnimationFrame(function(timestamp) {
 				that.rotateAnimation(elements, direction, timestamp, startstamp, currentstamp);
 			});
 		}
@@ -308,9 +330,11 @@ class Two extends Component {
 			var temp1 = elements[i];
 			for (var j = 0; j < beginStatus.length; j++) {
 				var temp2 = beginStatus[j];
-				if (Math.abs(temp1.position.x - temp2.x) <= 2 &&
+				if (
+					Math.abs(temp1.position.x - temp2.x) <= 2 &&
 					Math.abs(temp1.position.y - temp2.y) <= 2 &&
-					Math.abs(temp1.position.z - temp2.z) <= 2) {
+					Math.abs(temp1.position.z - temp2.z) <= 2
+				) {
 					temp1.cubeIndex = temp2.cubeIndex;
 					break;
 				}
@@ -352,16 +376,17 @@ class Two extends Component {
 	getIntersects(event) {
 		if (event.touches) {
 			var touch = event.touches[0];
-			mouse.x = (touch.clientX / width) * 2 - 1;
+			mouse.x = touch.clientX / width * 2 - 1;
 			mouse.y = -(touch.clientY / height) * 2 + 1;
 		} else {
-			mouse.x = (event.clientX / width) * 2 - 1;
+			mouse.x = event.clientX / width * 2 - 1;
 			mouse.y = -(event.clientY / height) * 2 + 1;
 		}
 		raycaster.setFromCamera(mouse, camera);
 		var intersects = raycaster.intersectObjects(scene.children);
 		if (intersects.length) {
 			try {
+				console.log(intersects);
 				if (intersects[0].object.cubeType === 'coverCube') {
 					intersect = intersects[1];
 					normalize = intersects[0].face.normal;
@@ -377,17 +402,13 @@ class Two extends Component {
 	//根据方向获得运动元素
 	getBoxs(target, direction) {
 		var targetId = target.object.cubeIndex;
-		var ids = [];
-		let cubes = meshesArray;
-		for (var i = 0; i < cubes.length; i++) {
-			ids.push(cubes[i].cubeIndex);
-		}
-		var minId = this.min(ids);
-		targetId = targetId - minId;
+		targetId = targetId - minCubeIndex;
 		var numI = parseInt(targetId / 9);
 		var numJ = targetId % 9;
 		var boxs = [];
-		//根据绘制时的规律判断 no = i*9+j
+		let cubes = meshesArray;
+		//根据绘制时的规律判断 no = i*9+
+		console.log(cubes, 'cubes');
 		switch (direction) {
 			//绕z轴
 			case 0.1:
@@ -399,7 +420,7 @@ class Two extends Component {
 			case 3.3:
 			case 3.4:
 				for (var i = 0; i < cubes.length; i++) {
-					var tempId = cubes[i].cubeIndex - minId;
+					var tempId = cubes[i].cubeIndex - minCubeIndex;
 					if (numI === parseInt(tempId / 9)) {
 						boxs.push(cubes[i]);
 					}
@@ -415,8 +436,8 @@ class Two extends Component {
 			case 5.3:
 			case 5.4:
 				for (var i = 0; i < cubes.length; i++) {
-					var tempId = cubes[i].cubeIndex - minId;
-					if (parseInt(numJ / 3) === parseInt(tempId % 9 / 3)) {
+					var tempId = cubes[i].cubeIndex - minCubeIndex;
+					if (parseInt(numJ / 3) === parseInt((tempId % 9) / 3)) {
 						boxs.push(cubes[i]);
 					}
 				}
@@ -431,8 +452,8 @@ class Two extends Component {
 			case 5.1:
 			case 5.2:
 				for (var i = 0; i < cubes.length; i++) {
-					var tempId = cubes[i].cubeIndex - minId;
-					if (tempId % 9 % 3 === numJ % 3) {
+					var tempId = cubes[i].cubeIndex - minCubeIndex;
+					if ((tempId % 9) % 3 === numJ % 3) {
 						boxs.push(cubes[i]);
 					}
 				}
@@ -440,110 +461,117 @@ class Two extends Component {
 			default:
 				break;
 		}
+		console.log('boxes', boxs);
 		return boxs;
 	}
 	//获取数组中的最小值
 	min(arr) {
 		var min = arr[0];
+		var no = 0;
 		for (var i = 1; i < arr.length; i++) {
 			if (arr[i] < min) {
 				min = arr[i];
+				no = i;
 			}
 		}
-		return min;
+		return { no: no, value: min };
 	}
 	//获得旋转方向
 	getDirection(vector3) {
 		var direction;
 		//判断差向量和x、y、z轴的夹角
-		var xAngle = vector3.angleTo(xLine);
-		var xAngleAd = vector3.angleTo(xLineAd);
-		var yAngle = vector3.angleTo(yLine);
-		var yAngleAd = vector3.angleTo(yLineAd);
-		var zAngle = vector3.angleTo(zLine);
-		var zAngleAd = vector3.angleTo(zLineAd);
-		var minAngle = this.min([xAngle, xAngleAd, yAngle, yAngleAd, zAngle, zAngleAd]);//最小夹角
-
+		//判断差向量和x、y、z轴的夹角
+		var xAngle = vector3.angleTo(XLine);
+		var xAngleAd = vector3.angleTo(XLineAd);
+		var yAngle = vector3.angleTo(YLine);
+		var yAngleAd = vector3.angleTo(YLineAd);
+		var zAngle = vector3.angleTo(ZLine);
+		var zAngleAd = vector3.angleTo(ZLineAd);
+		var minAngle = this.min([ xAngle, xAngleAd, yAngle, yAngleAd, zAngle, zAngleAd ]).value; //最小夹角
+		console.log([ xAngle, xAngleAd, yAngle, yAngleAd, zAngle, zAngleAd ]);
+		console.log(minAngle);
+		console.log(normalize);
 		switch (minAngle) {
 			case xAngle:
-				direction = 0;//向x轴正方向旋转90度（还要区分是绕z轴还是绕y轴）
-				if (normalize.equals(yLine)) {
-					direction = direction + 0.1;//绕z轴顺时针
-				} else if (normalize.equals(yLineAd)) {
-					direction = direction + 0.2;//绕z轴逆时针
-				} else if (normalize.equals(zLine)) {
-					direction = direction + 0.3;//绕y轴逆时针
+				direction = 0; //向x轴正方向旋转90度（还要区分是绕z轴还是绕y轴）
+				if (normalize.equals(YLine)) {
+					direction = direction + 0.1; //绕z轴顺时针
+				} else if (normalize.equals(YLineAd)) {
+					direction = direction + 0.2; //绕z轴逆时针
+				} else if (normalize.equals(ZLine)) {
+					direction = direction + 0.3; //绕y轴逆时针
 				} else {
-					direction = direction + 0.4;//绕y轴顺时针
+					direction = direction + 0.4; //绕y轴顺时针
 				}
 				break;
 			case xAngleAd:
-				direction = 1;//向x轴反方向旋转90度
-				if (normalize.equals(yLine)) {
-					direction = direction + 0.1;//绕z轴逆时针
-				} else if (normalize.equals(yLineAd)) {
-					direction = direction + 0.2;//绕z轴顺时针
-				} else if (normalize.equals(zLine)) {
-					direction = direction + 0.3;//绕y轴顺时针
+				direction = 1; //向x轴反方向旋转90度
+				if (normalize.equals(YLine)) {
+					direction = direction + 0.1; //绕z轴逆时针
+				} else if (normalize.equals(YLineAd)) {
+					direction = direction + 0.2; //绕z轴顺时针
+				} else if (normalize.equals(ZLine)) {
+					direction = direction + 0.3; //绕y轴顺时针
 				} else {
-					direction = direction + 0.4;//绕y轴逆时针
+					direction = direction + 0.4; //绕y轴逆时针
 				}
 				break;
 			case yAngle:
-				direction = 2;//向y轴正方向旋转90度
-				if (normalize.equals(zLine)) {
-					direction = direction + 0.1;//绕x轴逆时针
-				} else if (normalize.equals(zLineAd)) {
-					direction = direction + 0.2;//绕x轴顺时针
-				} else if (normalize.equals(xLine)) {
-					direction = direction + 0.3;//绕z轴逆时针
+				direction = 2; //向y轴正方向旋转90度
+				if (normalize.equals(ZLine)) {
+					direction = direction + 0.1; //绕x轴逆时针
+				} else if (normalize.equals(ZLineAd)) {
+					direction = direction + 0.2; //绕x轴顺时针
+				} else if (normalize.equals(XLine)) {
+					direction = direction + 0.3; //绕z轴逆时针
 				} else {
-					direction = direction + 0.4;//绕z轴顺时针
+					direction = direction + 0.4; //绕z轴顺时针
 				}
 				break;
 			case yAngleAd:
-				direction = 3;//向y轴反方向旋转90度
-				if (normalize.equals(zLine)) {
-					direction = direction + 0.1;//绕x轴顺时针
-				} else if (normalize.equals(zLineAd)) {
-					direction = direction + 0.2;//绕x轴逆时针
-				} else if (normalize.equals(xLine)) {
-					direction = direction + 0.3;//绕z轴顺时针
+				direction = 3; //向y轴反方向旋转90度
+				if (normalize.equals(ZLine)) {
+					direction = direction + 0.1; //绕x轴顺时针
+				} else if (normalize.equals(ZLineAd)) {
+					direction = direction + 0.2; //绕x轴逆时针
+				} else if (normalize.equals(XLine)) {
+					direction = direction + 0.3; //绕z轴顺时针
 				} else {
-					direction = direction + 0.4;//绕z轴逆时针
+					direction = direction + 0.4; //绕z轴逆时针
 				}
 				break;
 			case zAngle:
-				direction = 4;//向z轴正方向旋转90度
-				if (normalize.equals(yLine)) {
-					direction = direction + 0.1;//绕x轴顺时针
-				} else if (normalize.equals(yLineAd)) {
-					direction = direction + 0.2;//绕x轴逆时针
-				} else if (normalize.equals(xLine)) {
-					direction = direction + 0.3;//绕y轴顺时针
+				direction = 4; //向z轴正方向旋转90度
+				if (normalize.equals(YLine)) {
+					direction = direction + 0.1; //绕x轴顺时针
+				} else if (normalize.equals(YLineAd)) {
+					direction = direction + 0.2; //绕x轴逆时针
+				} else if (normalize.equals(XLine)) {
+					direction = direction + 0.3; //绕y轴顺时针
 				} else {
-					direction = direction + 0.4;//绕y轴逆时针
+					direction = direction + 0.4; //绕y轴逆时针
 				}
 				break;
 			case zAngleAd:
-				direction = 5;//向z轴反方向旋转90度
-				if (normalize.equals(yLine)) {
-					direction = direction + 0.1;//绕x轴逆时针
-				} else if (normalize.equals(yLineAd)) {
-					direction = direction + 0.2;//绕x轴顺时针
-				} else if (normalize.equals(xLine)) {
-					direction = direction + 0.3;//绕y轴逆时针
+				direction = 5; //向z轴反方向旋转90度
+				if (normalize.equals(YLine)) {
+					direction = direction + 0.1; //绕x轴逆时针
+				} else if (normalize.equals(YLineAd)) {
+					direction = direction + 0.2; //绕x轴顺时针
+				} else if (normalize.equals(XLine)) {
+					direction = direction + 0.3; //绕y轴逆时针
 				} else {
-					direction = direction + 0.4;//绕y轴顺时针
+					direction = direction + 0.4; //绕y轴顺时针
 				}
 				break;
 			default:
 				break;
 		}
+		console.log('direction', direction);
 		return direction;
 	}
 	isMouseOverCube(mouseX, mouseY) {
-/* 		var directionVector = new THREE.Vector3();
+		/* 		var directionVector = new THREE.Vector3();
 
 		//Normalise mouse x and y
 		var x = (mouseX / SCREEN_WIDTH) * 2 - 1;
@@ -557,7 +585,8 @@ class Two extends Component {
 		raycaster.set(camera.position, directionVector);
 
 		return raycaster.intersectObjects(allCubes, true).length > 0;
- */	}
+ */
+	}
 
 	//Return the axis which has the greatest maginitude for the vector v
 	principalComponent(v) {
