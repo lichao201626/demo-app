@@ -36,4 +36,17 @@ var j = schedule.scheduleJob(
 		console.log(y);
 	}.bind(null, x)
 );
+var j2 = schedule.scheduleJob({ hour: 14, minute: 19, dayOfWeek: 0 }, function(fireDate) {
+	console.log('Time for tea! j2');
+	console.log(fireDate);
+});
 x = 'Changing Data';
+
+// j.cancel();
+console.log(j2);
+let map1 = new Map();
+map1.set('xx', j2);
+console.log(map1);
+let obj = map1.get('xx');
+console.log(obj);
+obj.cancel();
